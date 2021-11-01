@@ -9,6 +9,8 @@ import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
+import selectors.profile.DeleteProfileSelectors;
+import selectors.profile.HomeSelectors;
 import tests.BaseTest;
 
 import java.time.Duration;
@@ -19,6 +21,9 @@ public class DeleteProfilesTests extends BaseTest {
     private final LogInMethods logInMethods;
     private final DeleteProfileMethods deleteProfileMethods;
     private final CreateProfileMethods createProfileMethods;
+    private final DeleteProfileSelectors deleteProfileSelectors;
+    private final HomeSelectors homeSelectors;
+
     public String username = "jelena.jankovic";
     public String password = "Lozinka123";
 
@@ -26,6 +31,8 @@ public class DeleteProfilesTests extends BaseTest {
         logInMethods = new LogInMethods(driver);
         deleteProfileMethods = new DeleteProfileMethods(driver);
         createProfileMethods = new CreateProfileMethods(driver);
+        deleteProfileSelectors = new DeleteProfileSelectors(driver);
+        homeSelectors = new HomeSelectors(driver);
 
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
@@ -51,19 +58,19 @@ public class DeleteProfilesTests extends BaseTest {
         createProfileMethods.createProfileFromChooseMenu(name, age, birthYear);
         deleteProfileMethods.deleteProfile();
 
-        webElementUtils.waitForElementToBeVisible(By.className("profiles__profile"));
-        List<WebElement> profiles = driver.findElements(By.className("profiles__profile"));
+        webElementUtils.waitForElementToBeVisible(homeSelectors.getProfilesSelector());
+        List<WebElement> profiles = homeSelectors.getProfiles();
 
         Assert.assertEquals(profiles.size(), 1);
     }
 
     @Test
     public void familyProfileDelete() {
-        webElementUtils.waitForElementToBeVisible(By.className("profiles__profile"));
-        List<WebElement> profiles = driver.findElements(By.className("profiles__profile"));
+        webElementUtils.waitForElementToBeVisible(homeSelectors.getProfilesSelector());
+        List<WebElement> profiles = homeSelectors.getProfiles();
         profiles.get(0).click();
 
-        String disabled = driver.findElement(By.className("card__delete")).getAttribute("disabled");
+        String disabled = deleteProfileSelectors.getDeleteProfileButton().getAttribute("disabled");
 
         Assert.assertEquals(disabled, "true");
     }

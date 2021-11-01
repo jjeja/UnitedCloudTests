@@ -3,6 +3,7 @@ package methods.profile;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import selectors.common.CommonSelectors;
 import selectors.profile.AgeSelectors;
 import selectors.profile.AvatarSelectors;
 import selectors.profile.CreateProfileSelectors;
@@ -18,6 +19,7 @@ public class CreateProfileMethods {
     private final AvatarSelectors avatarSelectors;
     private final WebDriver driver;
     private final WebElementUtils webElementUtils;
+    private final CommonSelectors commonSelectors;
 
     public CreateProfileMethods(WebDriver driver) {
         this.driver = driver;
@@ -25,6 +27,7 @@ public class CreateProfileMethods {
         ageSelectors = new AgeSelectors(driver);
         avatarSelectors = new AvatarSelectors(driver);
         webElementUtils = new WebElementUtils(driver);
+        commonSelectors = new CommonSelectors();
     }
 
     public void createProfileFromChooseMenu(String name, Integer age, Integer birthYear) {
@@ -65,7 +68,7 @@ public class CreateProfileMethods {
             ageElementSelector = ageSelectors.getAge18PlusSelector();
         }
 
-        webElementUtils.waitForElementToBeInvisible(By.className("loader-wrapper__loader"));
+        webElementUtils.waitForElementToBeInvisible(commonSelectors.getLoaderWrapperSelector());
         WebElement parent = driver.findElement(ageElementSelector).findElement(By.xpath("./.."));
         parent.click();
 

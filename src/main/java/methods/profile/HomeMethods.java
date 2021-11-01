@@ -9,7 +9,7 @@ public class HomeMethods {
 
     public HomeMethods(WebDriver driver) {
         this.driver = driver;
-        chooseProfileSelectors = new HomeSelectors();
+        chooseProfileSelectors = new HomeSelectors(driver);
     }
 
     public void goToChooseProfile() {

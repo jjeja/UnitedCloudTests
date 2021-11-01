@@ -15,7 +15,7 @@ public class LogInMethods {
     public LogInMethods(WebDriver driver) {
         this.driver = driver;
         this.logInSelectors = new LogInSelectors(driver);
-        this.homeSelectors = new HomeSelectors();
+        this.homeSelectors = new HomeSelectors(driver);
         this.utils = new WebElementUtils(driver);
     }
 

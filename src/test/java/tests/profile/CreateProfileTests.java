@@ -9,8 +9,13 @@ import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeTest;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import selectors.profile.DeleteProfileSelectors;
+import selectors.profile.HomeSelectors;
+import selectors.profile.ProfileSelectors;
 import tests.BaseTest;
+import tests.dataproviders.profile.ProfileDataProvider;
 
 import java.time.Duration;
 import java.util.Calendar;
@@ -26,6 +31,10 @@ public class CreateProfileTests extends BaseTest {
     private final LogInMethods logInMethods;
     private final HomeMethods homeMethods;
     private final CreateProfileMethods createProfileMethods;
+    private final DeleteProfileSelectors deleteProfileSelectors;
+    private final HomeSelectors homeSelectors;
+    private final ProfileSelectors profileSelectors;
+
     public final String username = "jelena.jankovic";
     public final String password = "Lozinka123";
     public final Random random;
@@ -35,6 +44,9 @@ public class CreateProfileTests extends BaseTest {
         logInMethods = new LogInMethods(driver);
         homeMethods = new HomeMethods(driver);
         createProfileMethods = new CreateProfileMethods(driver);
+        deleteProfileSelectors = new DeleteProfileSelectors(driver);
+        homeSelectors = new HomeSelectors(driver);
+        profileSelectors = new ProfileSelectors(driver);
 
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
@@ -53,13 +65,13 @@ public class CreateProfileTests extends BaseTest {
         homeMethods.goToChooseProfile();
 
         while(true) {
-            List<WebElement> profiles = driver.findElements(By.className("profiles__profile"));
+            List<WebElement> profiles = homeSelectors.getProfiles();
             if (profiles.size() <= 1) {
                 break;
             }
 
             profiles.get(1).click();
-            driver.findElement(By.className("card__delete")).click();
+            deleteProfileSelectors.getDeleteProfileButton().click();
         }
     }
 
@@ -75,10 +87,8 @@ public class CreateProfileTests extends BaseTest {
 
         createProfileMethods.createProfileFromChooseMenu(name, age, birthYear);
 
-        String createdProfileName = driver.findElement(By.className("card__profile-name"))
-                .getAttribute("innerText");
-        String createdProfileType = driver.findElement(By.className("card__profile-type"))
-                .getAttribute("innerText");
+        String createdProfileName = profileSelectors.getProfileName().getAttribute("innerText");
+        String createdProfileType = profileSelectors.getProfileType().getAttribute("innerText");
 
         Assert.assertEquals(createdProfileName, name);
         if (age <= 11) {
@@ -90,9 +100,9 @@ public class CreateProfileTests extends BaseTest {
         }
     }
 
-    @Test
-    public void nameOneCharacterTest() {
-        String name = Faker.instance().lorem().characters(1);
+    @Test(dataProvider = "nameDataProvider",
+            dataProviderClass = ProfileDataProvider.class)
+    public void profileNameTest(String name) {
         int age = random.nextInt(100);
         Integer birthYear = null;
 
@@ -101,15 +111,13 @@ public class CreateProfileTests extends BaseTest {
         }
 
         createProfileMethods.createProfileFromChooseMenu(name, age, birthYear);
-
-        String createdProfileName = driver.findElement(By.className("card__profile-name"))
-                .getAttribute("innerText");
+        String createdProfileName = profileSelectors.getProfileName().getAttribute("innerText");
 
         Assert.assertEquals(createdProfileName, name);
     }
 
     @Test
-    public void nameLengthTest() {
+    public void profileNameMaximumLengthTest() {
         int age = random.nextInt(100);
         Integer birthYear = null;
 
@@ -121,23 +129,28 @@ public class CreateProfileTests extends BaseTest {
         String name = Faker.instance().lorem().characters(40);
         createProfileMethods.createProfileFromChooseMenu(name, age, birthYear);
 
-        String createdProfileName = driver.findElement(By.className("card__profile-name"))
-                .getAttribute("innerText");
+        String createdProfileName = profileSelectors.getProfileName().getAttribute("innerText");
 
         Assert.assertEquals(createdProfileName, name.substring(0, 32));
     }
 
     @Test
-    public void ageTest() {
-        int age = 22;
-        int birthYear = Calendar.getInstance().get(Calendar.YEAR) + 10;
+    public void emptyNameTest() {
+        createProfileMethods.createProfileFromChooseMenu("", 5, null);
+        String error = profileSelectors.getErrorName().getAttribute("innerText");
 
-        createProfileMethods.createProfileFromChooseMenu("testAge", age, birthYear);
-        //Assert.assertEquals("error", "Age cannot be in the future");
+        // cannot find this in dom
+        Assert.assertEquals(error, "Please fill in this field.");
+    }
 
-        birthYear = 1732;
-        createProfileMethods.createProfileFromNavigation("testAge", age, birthYear);
-        //Assert.assertEquals("error", "Age is more than 150 years in the past");
+    /**
+     * This test is just a placeholder, currently all wrong cases pass
+     */
+    @Test(dataProvider = "birthYearProvider",
+            dataProviderClass = ProfileDataProvider.class)
+    public void ageTest(int birthYear) {
+        createProfileMethods.createProfileFromChooseMenu("testAge", 22, birthYear);
+        //Assert.assertEquals("error", "Age is not correct");
     }
 
     @Test
