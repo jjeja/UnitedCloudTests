@@ -10,7 +10,7 @@ public class ProfileSelectors {
     private final WebDriver driver;
 
     private static final String nameSelector = "card__profile-name";
-    private static final String typeSelector = "card__profile-type-name";
+    private static final String typeSelector = "card__profile-type";
     private static final String nameErrorSelector = "//*[contains(text(), 'Please fill in this field.')]";
 
     public ProfileSelectors(WebDriver driver) {

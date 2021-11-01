@@ -79,7 +79,7 @@ public class CreateProfileMethods {
 
     private void addBirthYear(Integer birthYear) {
         ageSelectors.getBirthYear().click();
-        ageSelectors.getBirthYear().sendKeys(birthYear.toString());
+        ageSelectors.getBirthYear().sendKeys(birthYear == null ? "" : birthYear.toString());
     }
 
     private void pickAvatarBasedOnAge(Integer age) {
