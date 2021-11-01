@@ -131,7 +131,6 @@ public class AvatarSelectors {
         Random random = new Random();
         int randomNumber = random.nextInt(array.length);
 
-//        return driver.findElement(By.xpath("//input[@id='" + array[randomNumber] + "']/following-sibling::label/div/img"));
         return "//input[@id='" + array[randomNumber] + "']/following-sibling::label/div/img";
     }
 

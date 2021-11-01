@@ -87,7 +87,6 @@ public class CreateProfileMethods {
         webElementUtils.waitForElementToBeInvisible(By.xpath(avatarSelector));
         webElementUtils.waitForElementToBeVisible(By.xpath(avatarSelector));
 
-        // zato sto element nije bio dosutpan u to vreme
         Actions actions = new Actions(driver);
 
         WebElement element = driver.findElement(By.xpath(avatarSelector));
